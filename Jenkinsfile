@@ -4,6 +4,7 @@ pipeline {
     environment {
         JAVA_HOME = tool name: 'Java11', type: 'jdk'
         MAVEN_HOME = tool name: 'Maven', type: 'maven'
+        DOCKER_HUB_CREDENTIALS = 'docker-hub-credentials' // Update with your Docker Hub credentials ID
     }
     
     tools {
@@ -44,6 +45,17 @@ pipeline {
             steps {
                 script {
                     sh 'docker build -t myapp:${env.BUILD_ID} .'
+                }
+            }
+        }
+        
+        stage('Docker Push to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', env.DOCKER_HUB_CREDENTIALS) {
+                        sh 'docker tag myapp:${env.BUILD_ID} your-dockerhub-username/myapp:${env.BUILD_ID}'
+                        sh 'docker push your-dockerhub-username/myapp:${env.BUILD_ID}'
+                    }
                 }
             }
         }
