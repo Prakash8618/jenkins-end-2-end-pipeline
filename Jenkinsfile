@@ -17,7 +17,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/yourrepo/my-app.git'
+                git 'https://github.com/Pavan1403/jenkins-end-2-end-pipeline.git'
             }
         }
         
