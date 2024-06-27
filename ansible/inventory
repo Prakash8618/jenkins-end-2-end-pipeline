@@ -1,0 +1,2 @@
+[ansible]
+ansible.example.com ansible_user=ansible
