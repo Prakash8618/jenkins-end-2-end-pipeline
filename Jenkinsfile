@@ -5,6 +5,8 @@ pipeline {
         JAVA_HOME = tool name: 'Java11', type: 'jdk'
         MAVEN_HOME = tool name: 'Maven', type: 'maven'
         DOCKER_HUB_CREDENTIALS = 'docker-hub-credentials' // Update with your Docker Hub credentials ID
+        SONARQUBE_SERVER = 'SonarQube'
+        ARTIFACTORY_SERVER = 'Artifactory'
     }
     
     tools {
@@ -15,7 +17,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git 'https://github.com/yourrepo/my-app.git'
             }
         }
         
