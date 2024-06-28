@@ -17,7 +17,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/Pavan1403/jenkins-end-2-end-pipeline.git'
+                git changelog: false, credentialsId: 'Git_Credentials', poll: false, url: 'https://github.com/Pavan1403/jenkins-end-2-end-pipeline.git'
             }
         }
         
