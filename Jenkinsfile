@@ -55,8 +55,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', env.DOCKER_HUB_CREDENTIALS) {
-                        sh 'docker tag myapp:${env.BUILD_ID} your-dockerhub-username/myapp:${env.BUILD_ID}'
-                        sh 'docker push your-dockerhub-username/myapp:${env.BUILD_ID}'
+                        sh 'docker tag myapp:${env.BUILD_ID} pavan539/myapp:${env.BUILD_ID}'
+                        sh 'docker push pavan539/myapp:${env.BUILD_ID}'
                     }
                 }
             }
