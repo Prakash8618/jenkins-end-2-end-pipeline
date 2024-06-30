@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: myapp
-          image: myapp:${BUILD_ID}
+          image: pavan539/e2ejenkins:latest
           ports:
             - containerPort: 8080
