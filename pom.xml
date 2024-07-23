@@ -10,14 +10,12 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-    </properties>
-    <properties>
-      <!-- SonarQube server URL -->
-      <sonar.host.url>http://34.207.117.240:9000</sonar.host.url>
-      <!-- SonarQube project key -->
-      <sonar.projectKey>javaapp</sonar.projectKey>
-      <!-- SonarQube authentication token -->
-      <sonar.login>53ca77c3be5b24478133dcf95ba9268ebbc6b1e2</sonar.login>
+        <!-- SonarQube server URL -->
+        <sonar.host.url>http://34.207.117.240:9000</sonar.host.url>
+        <!-- SonarQube project key -->
+        <sonar.projectKey>javaapp</sonar.projectKey>
+        <!-- SonarQube authentication token -->
+        <sonar.login>53ca77c3be5b24478133dcf95ba9268ebbc6b1e2</sonar.login>
     </properties>
     
     <dependencies>
