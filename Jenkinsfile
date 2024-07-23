@@ -2,85 +2,58 @@ pipeline {
     agent any
     
     environment {
-        JAVA_HOME = tool name: 'Java11', type: 'jdk'
-        MAVEN_HOME = tool name: 'Maven', type: 'maven'
-        DOCKER_HUB_CREDENTIALS = 'docker-hub-credentials' // Update with your Docker Hub credentials ID
-        SONARQUBE_SERVER = 'SonarQube'
-        ARTIFACTORY_SERVER = 'Artifactory'
+        SCANNER_HOME = tool name: 'SonarQube_Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
     }
     
     tools {
-        jdk 'Java11'
-        maven 'Maven'
+        jdk 'Java17'
+        maven 'Maven3.9'
+        // Make sure 'SonarQube_Scanner' is configured in Global Tool Configuration in Jenkins
     }
     
     stages {
-        stage('Checkout') {
+        stage('Git Checkout') {
             steps {
-                git changelog: false, credentialsId: 'Git_Credentials', poll: false, url: 'https://github.com/Pavan1403/jenkins-end-2-end-pipeline.git'
+                git branch: 'main', changelog: false, credentialsId: 'Git_Cred', poll: false, url: 'https://github.com/Pavan1403/jenkins-end-2-end-pipeline.git'
             }
         }
         
-        stage('Build') {
+        stage('Maven COMPILE') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn clean compile'
             }
         }
         
-        stage('Test') {
+        stage('Maven TEST') {
             steps {
                 sh 'mvn test'
             }
         }
         
-        stage('SonarQube Analysis') {
+        stage('OWASP SCAN') {
+            steps {
+                dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'DP7'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+        
+        stage('Sonar CODE ANALYSIS') {
             steps {
                 script {
-                    withSonarQubeEnv('SonarQube') {
+                    withSonarQubeEnv('sonarqube') {
                         sh 'mvn sonar:sonar'
                     }
                 }
             }
         }
         
-        stage('Docker Build') {
+        stage('Maven BUILD') {
             steps {
-                script {
-                    sh 'docker build -t myapp:${env.BUILD_ID} .'
-                }
+                sh 'mvn clean package'
             }
         }
         
-        stage('Docker Push to Docker Hub') {
-            steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', env.DOCKER_HUB_CREDENTIALS) {
-                        sh 'docker tag myapp:${env.BUILD_ID} pavan539/myapp:${env.BUILD_ID}'
-                        sh 'docker push pavan539/myapp:${env.BUILD_ID}'
-                    }
-                }
-            }
-        }
-        
-        stage('Minikube Deploy') {
-            steps {
-                script {
-                    withKubeConfig([credentialsId: 'minikube-kubeconfig']) {
-                        sh '''
-                            kubectl apply -f k8s/deployment.yaml
-                        '''
-                    }
-                }
-            }
-        }
-        
-        stage('Ansible Deploy') {
-            steps {
-                ansiblePlaybook credentialsId: 'ansible-ssh-key', inventory: 'ansible/inventory', playbook: 'ansible/playbook.yml'
-            }
-        }
-        
-        stage('Publish to Artifactory') {
+        stage('PUBLISH to Artifactory') {
             steps {
                 script {
                     def server = Artifactory.server 'Artifactory'
@@ -88,19 +61,26 @@ pipeline {
                         "files": [
                             {
                                 "pattern": "target/*.jar",
-                                "target": "libs-release-local/myapp/${env.BUILD_ID}/"
+                                "target": "example-repo-local/myapp/${env.BUILD_ID}/"
                             }
                         ]
                     }"""
-                    server.upload spec: uploadSpec
+                    def buildInfo = server.upload spec: uploadSpec
+                    server.publishBuildInfo buildInfo
                 }
             }
         }
-    }
-    
-    post {
-        always {
-            cleanWs()
+        
+        stage('Docker BUILD & PUSH') {
+            steps {
+                script {
+                    withDockerRegistry([credentialsId: 'DockerHub_Cred', url: '']) {
+                        sh "docker build -t e2ejenkins ."
+                        sh "docker tag e2ejenkins pavan539/e2ejenkins:latest"
+                        sh "docker push pavan539/e2ejenkins:latest"
+                    }
+                }
+            }
         }
     }
 }
