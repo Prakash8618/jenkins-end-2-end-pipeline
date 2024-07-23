@@ -11,6 +11,14 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
+    <properties>
+      <!-- SonarQube server URL -->
+      <sonar.host.url>http://34.207.117.240:9000</sonar.host.url>
+      <!-- SonarQube project key -->
+      <sonar.projectKey>javaapp</sonar.projectKey>
+      <!-- SonarQube authentication token -->
+      <sonar.login>53ca77c3be5b24478133dcf95ba9268ebbc6b1e2</sonar.login>
+    </properties>
     
     <dependencies>
         <!-- JUnit for testing -->
@@ -34,6 +42,13 @@
                     <target>11</target>
                 </configuration>
             </plugin>
+        <plugins>
+            <plugin>
+                   <groupId>org.sonarsource.scanner.maven</groupId>
+                   <artifactId>sonar-maven-plugin</artifactId>
+                   <version>3.9.0.2155</version> <!-- Replace with the latest version -->
+            </plugin>
+        </plugins>
             
             <!-- Maven Surefire Plugin for running tests -->
             <plugin>
