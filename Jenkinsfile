@@ -76,8 +76,8 @@ pipeline {
                 script {
                     withDockerRegistry([credentialsId: 'DockerHub_Cred', url: '']) {
                         sh "docker build -t e2ejenkins ."
-                        sh "docker tag e2ejenkins pavan539/e2ejenkins:latest"
-                        sh "docker push pavan539/e2ejenkins:latest"
+                        sh "docker tag e2ejenkins prakash8618/e2ejenkins:latest"
+                        sh "docker push prakash8618/e2ejenkins:latest"
                     }
                 }
             }
