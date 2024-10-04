@@ -57,7 +57,7 @@ pipeline {
             steps {
                 script {
                     def server = Artifactory.server('Artifactory')
-                    def uploadSpec = ""{
+                    def uploadSpec = """{
                         "files": [
                             {
                                 "pattern": "target/*.jar",
