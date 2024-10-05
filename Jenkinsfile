@@ -56,7 +56,7 @@ pipeline {
         stage('PUBLISH to Artifactory') {
             steps {
                 script {
-                    def server = Artifactory.server('my-Artifactory')
+                    def server = Artifactory.server('Artifactory')
                     def uploadSpec = """{
                         "files": [
                             {
