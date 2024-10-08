@@ -2,19 +2,19 @@ pipeline {
     agent any
     
     environment {
-        SCANNER_HOME = tool name: 'SonarQube_Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+        SCANNER_HOME = tool name: 'sonarqube', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
     }
     
     tools {
-        jdk 'Java17'
-        maven 'Maven3.9'
+        jdk 'jdk-11'
+        maven 'maven3'
         // Make sure 'SonarQube_Scanner' is configured in Global Tool Configuration in Jenkins
     }
     
     stages {
-        stage('Git Checkout') {
+        stage('git checkout') {
             steps {
-                git branch: 'main', changelog: false, credentialsId: 'Git_Cred', poll: false, url: 'https://github.com/Pavan1403/jenkins-end-2-end-pipeline.git'
+                git branch: 'main', changelog: false, credentialsId: 'Github-cred', poll: false, url: 'https://github.com/Prakash8618/jenkins-end-2-end-pipeline.git'
             }
         }
         
@@ -32,7 +32,7 @@ pipeline {
         
         stage('OWASP SCAN') {
             steps {
-                dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'DP7'
+                dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'dp-check7'
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
@@ -40,7 +40,7 @@ pipeline {
         stage('Sonar CODE ANALYSIS') {
             steps {
                 script {
-                    withSonarQubeEnv('sonarqube') {
+                    withSonarQubeEnv('sonar') {
                         sh 'mvn sonar:sonar'
                     }
                 }
@@ -56,7 +56,7 @@ pipeline {
         stage('PUBLISH to Artifactory') {
             steps {
                 script {
-                    def server = Artifactory.server('Artifactory')
+                    def server = Artifactory.server 'jfrogserver'
                     def uploadSpec = """{
                         "files": [
                             {
