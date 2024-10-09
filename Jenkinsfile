@@ -82,5 +82,19 @@ pipeline {
                 }
             }
         }
+        stage('Kubernetes DEPLOY') {
+            steps {
+                script {
+                    // Set the Kubernetes context if necessary
+                    sh 'kubectl config use-context your-kube-context'  // Change to your context
+                    
+                    // Deploy to Kubernetes
+                    sh '''
+                    kubectl apply -f k8s/deployment.yaml
+                    kubectl apply -f k8s/service.yaml
+                    '''
+                }
+            }
+        }
     }
 }
