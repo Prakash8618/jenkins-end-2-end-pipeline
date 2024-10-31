@@ -9,5 +9,5 @@ spec:
   selector:
     app: myapp          # This should match the labels in your deployment
   ports:
-    - port: 80          # Port exposed by the service
+    - port: 8080          # Port exposed by the service
       targetPort: 8080  # Port on the pod where the app is running
